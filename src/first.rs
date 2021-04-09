@@ -29,7 +29,7 @@ impl List {
             Node {
                 elem: elem,
                 // This returns the value self.ptr and assigns
-                // self.ptr to Link::Nill immediately afterwards.
+                // self.ptr to Link::Nil immediately afterwards.
                 next: mem::replace(&mut self.ptr, Link::Nil),
             }
         );
