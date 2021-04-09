@@ -12,3 +12,11 @@ struct Node {
     left: Link,
     right: Link,
 }
+
+impl Tree {
+    pub fn new() -> Self {
+        Tree {
+            ptr: Link::Nil
+        }
+    }
+}
