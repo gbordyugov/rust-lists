@@ -16,10 +16,21 @@ struct Node {
     next: Link,
 }
 
+use std::mem;
+
 impl List {
     pub fn new() -> Self {
         List {
             ptr: Link::Nil
         }
+    }
+    pub fn push(&mut self, elem: i32) {
+        let new_node = Box::new(
+            Node {
+                elem: elem,
+                next: mem::replace(&mut self.ptr, Link::Nil),
+            }
+        );
+        self.ptr = Link::More(new_node);
     }
 }
