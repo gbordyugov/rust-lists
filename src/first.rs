@@ -3,6 +3,7 @@ struct Node {
     next: List,
 }
 
+
 pub enum List {
     Empty,
     More(Box<Node>),
