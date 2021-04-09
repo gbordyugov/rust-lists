@@ -24,6 +24,7 @@ impl List {
             ptr: Link::Nil
         }
     }
+
     pub fn push(&mut self, elem: i32) {
         let new_node = Box::new(
             Node {
@@ -34,5 +35,19 @@ impl List {
             }
         );
         self.ptr = Link::More(new_node);
+    }
+
+    pub fn pop(&mut self) -> Option<i32> {
+        let result;
+        match mem::replace(&mut self.ptr, Link::Nil) {
+            Link::Nil => {
+                result = None
+            }
+            Link::More(node) => {
+                result = Some(node.elem);
+                self.ptr = node.next
+            }
+        }
+        result
     }
 }
