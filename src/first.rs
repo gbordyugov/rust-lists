@@ -2,27 +2,21 @@ pub struct List {
     head: Link,
 }
 
-
 enum Link {
     Nil,
     More(Box<Node>),
 }
-
 
 struct Node {
     elem: i32,
     next: Link,
 }
 
-
 use std::mem;
-
 
 impl List {
     pub fn new() -> Self {
-        List {
-            head: Link::Nil
-        }
+        List { head: Link::Nil }
     }
 
     pub fn push(&mut self, elem: i32) {
@@ -43,7 +37,6 @@ impl List {
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {
