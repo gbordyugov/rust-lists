@@ -43,3 +43,52 @@ impl List {
         }
     }
 }
+
+
+#[cfg(test)]
+mod test {
+    use super::List;
+
+    #[test]
+    fn test_popping_from_empty_list() {
+        let mut list = List::new();
+
+        assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_singleton_list() {
+        let mut list = List::new();
+
+        list.push(1);
+
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_doublet_list() {
+        let mut list = List::new();
+
+        list.push(1);
+        list.push(2);
+
+        assert_eq!(list.pop(), Some(2));
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_triplet_list() {
+        let mut list = List::new();
+
+        list.push(1);
+        list.push(2);
+        list.push(3);
+
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(2));
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+    }
+}
