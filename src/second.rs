@@ -17,14 +17,13 @@ impl<T> List<T> {
     pub fn push(&mut self, elem: T) {
         let n = Node {
             elem: elem,
-            next: self.head.take(),
+            next: self.head.take()
         };
-
-        self.head = Link::Some(Box::new(n))
+        self.head = Some(Box::new(n))
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        self.head.take().map(|node| {
+        self.head.take().map( |node| {
             self.head = node.next;
             node.elem
         })
@@ -34,9 +33,8 @@ impl<T> List<T> {
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur = self.head.take();
-
-        while let Some(mut node) = cur {
-            cur = node.next.take()
+        while let Some(node) = cur {
+            cur = node.next
         }
     }
 }
