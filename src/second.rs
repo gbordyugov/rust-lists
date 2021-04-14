@@ -135,4 +135,19 @@ mod test {
 
         assert_eq!(list.peek_mut(), Some(&mut 1));
     }
+
+    #[test]
+    fn test_peek_mut_nonempty_mutate() {
+        let mut list = List::new();
+        list.push(1);
+
+        assert_eq!(list.peek(), Some(&1));
+
+        list.peek_mut().map(|val| {
+            *val = 42
+        });
+
+        assert_eq!(list.peek(), Some(&42));
+        assert_eq!(list.pop(), Some(42));
+    }
 }
