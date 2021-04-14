@@ -9,7 +9,21 @@ struct Node<T> {
     next: Link<T>,
 }
 
+pub struct IntoIterList<T>(List<T>);
+
+impl<T> Iterator for IntoIterList<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+
 impl<T> List<T> {
+    pub fn into_iter_list(self) -> IntoIterList<T> {
+        IntoIterList(self)
+    }
+
     pub fn new() -> Self {
         List { head: None }
     }
@@ -149,5 +163,21 @@ mod test {
 
         assert_eq!(list.peek(), Some(&42));
         assert_eq!(list.pop(), Some(42));
+    }
+
+    #[test]
+    fn test_into_iter_list() {
+        let mut list = List::new();
+
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        let mut iter = list.into_iter_list();
+
+        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), None);
     }
 }
