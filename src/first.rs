@@ -21,7 +21,7 @@ impl List {
 
     pub fn push(&mut self, elem: i32) {
         let n = Node {
-            elem: elem,
+            elem,
             next: mem::replace(&mut self.head, Link::Nil),
         };
 
@@ -36,6 +36,12 @@ impl List {
                 Some(node.elem)
             }
         }
+    }
+}
+
+impl Default for List {
+    fn default() -> Self {
+        List::new()
     }
 }
 

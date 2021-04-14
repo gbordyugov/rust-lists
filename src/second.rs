@@ -16,7 +16,7 @@ impl<T> List<T> {
 
     pub fn push(&mut self, elem: T) {
         let n = Node {
-            elem: elem,
+            elem,
             next: self.head.take()
         };
         self.head = Some(Box::new(n))
@@ -27,6 +27,12 @@ impl<T> List<T> {
             self.head = node.next;
             node.elem
         })
+    }
+}
+
+impl<T> Default for List<T> {
+    fn default() -> Self {
+        List::new()
     }
 }
 
