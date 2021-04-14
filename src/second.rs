@@ -34,6 +34,12 @@ impl<T> List<T> {
             &node.elem
         })
     }
+
+    pub fn peek_mut(&mut self) -> Option<&mut T> {
+        self.head.as_mut().map(|node| {
+            &mut node.elem
+        })
+    }
 }
 
 impl<T> Default for List<T> {
@@ -112,5 +118,21 @@ mod test {
         list.push(1);
 
         assert_eq!(list.peek(), Some(&1));
+    }
+
+    #[test]
+    fn test_peek_mut_empty() {
+        let mut list = List::<i32>::new();
+
+        assert_eq!(list.peek_mut(), None);
+
+    }
+
+    #[test]
+    fn test_peek_mut_nonempty() {
+        let mut list = List::new();
+        list.push(1);
+
+        assert_eq!(list.peek_mut(), Some(&mut 1));
     }
 }
