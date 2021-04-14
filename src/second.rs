@@ -28,6 +28,12 @@ impl<T> List<T> {
             node.elem
         })
     }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| {
+            &node.elem
+        })
+    }
 }
 
 impl<T> Default for List<T> {
@@ -90,5 +96,21 @@ mod test {
         assert_eq!(list.pop(), Some(2));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_peek_empty() {
+        let list = List::<i32>::new();
+
+        assert_eq!(list.peek(), None);
+
+    }
+
+    #[test]
+    fn test_peek_nonempty() {
+        let mut list = List::new();
+        list.push(1);
+
+        assert_eq!(list.peek(), Some(&1));
     }
 }
