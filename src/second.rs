@@ -18,29 +18,7 @@ impl<T> Iterator for IntoIterList<T> {
     }
 }
 
-pub struct Iter<'a, T> {
-    next: Option<&'a Node<T>>,
-}
-
-impl<'a, T> Iterator for Iter<'a, T> {
-    type Item = &'a T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next.map( |node| {
-            self.next = node.next.as_deref();
-            &node.elem
-        })
-    }
-}
-
-
 impl<T> List<T> {
-    pub fn iter<'a>(&'a self) -> Iter<'a, T> {
-        Iter {
-            next: self.head.as_deref()
-        }
-    }
-
     pub fn into_iter_list(self) -> IntoIterList<T> {
         IntoIterList(self)
     }
@@ -91,6 +69,34 @@ impl<T> Drop for List<T> {
         }
     }
 }
+
+/*
+ * Implementing iterator.
+ */
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map( |node| {
+            self.next = node.next.as_deref();
+            &node.elem
+        })
+    }
+}
+
+impl<T> List<T> {
+    pub fn iter<'a>(&'a self) -> Iter<'a, T> {
+        Iter {
+            next: self.head.as_deref()
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod test {
