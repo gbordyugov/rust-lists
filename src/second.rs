@@ -89,7 +89,12 @@ impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        unimplemented!()
+        self.next.map(
+            |next| {
+                self.next = next.next.as_deref();
+                &next.elem
+            }
+        )
     }
 }
 
