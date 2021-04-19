@@ -9,21 +9,7 @@ struct Node<T> {
     next: Link<T>,
 }
 
-pub struct IntoIterList<T>(List<T>);
-
-impl<T> Iterator for IntoIterList<T> {
-    type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.pop()
-    }
-}
-
-
 impl<T> List<T> {
-    pub fn into_iter_list(self) -> IntoIterList<T> {
-        IntoIterList(self)
-    }
-
     pub fn new() -> Self {
         List { head: None }
     }
@@ -67,6 +53,55 @@ impl<T> Drop for List<T> {
         let mut cur = self.head.take();
         while let Some(node) = cur {
             cur = node.next
+        }
+    }
+}
+
+
+/*
+ * Implementing IntoIter.
+ */
+
+pub struct IntoIterList<T>(List<T>);
+
+impl<T> Iterator for IntoIterList<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+impl<T> List<T> {
+    pub fn into_iter_list(self) -> IntoIterList<T> {
+        IntoIterList(self)
+    }
+}
+
+/*
+ * Implementing iterator.
+ */
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(
+            |next| {
+                self.next = next.next.as_deref();
+                &next.elem
+            }
+        )
+    }
+}
+
+impl<T> List<T> {
+    pub fn iter(&self) -> Iter<T> {
+        Iter {
+            next: self.head.as_deref()
         }
     }
 }
