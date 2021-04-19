@@ -192,9 +192,9 @@ mod test {
 
         assert_eq!(list.peek(), Some(&1));
 
-        list.peek_mut().map(|val| {
+        if let Some(val) = list.peek_mut() {
             *val = 42
-        });
+        };
 
         assert_eq!(list.peek(), Some(&42));
         assert_eq!(list.pop(), Some(42));
