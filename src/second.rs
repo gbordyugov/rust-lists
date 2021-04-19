@@ -9,20 +9,7 @@ struct Node<T> {
     next: Link<T>,
 }
 
-pub struct IntoIterList<T>(List<T>);
-
-impl<T> Iterator for IntoIterList<T> {
-    type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.pop()
-    }
-}
-
 impl<T> List<T> {
-    pub fn into_iter_list(self) -> IntoIterList<T> {
-        IntoIterList(self)
-    }
-
     pub fn new() -> Self {
         List { head: None }
     }
@@ -70,6 +57,26 @@ impl<T> Drop for List<T> {
     }
 }
 
+
+/*
+ * Implementing IntoIter.
+ */
+
+pub struct IntoIterList<T>(List<T>);
+
+impl<T> Iterator for IntoIterList<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+impl<T> List<T> {
+    pub fn into_iter_list(self) -> IntoIterList<T> {
+        IntoIterList(self)
+    }
+}
+
 /*
  * Implementing iterator.
  */
@@ -82,21 +89,17 @@ impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.next.map( |node| {
-            self.next = node.next.as_deref();
-            &node.elem
-        })
+        unimplemented!()
     }
 }
 
 impl<T> List<T> {
-    pub fn iter<'a>(&'a self) -> Iter<'a, T> {
+    pub fn iter(&self) -> Iter<T> {
         Iter {
             next: self.head.as_deref()
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {
