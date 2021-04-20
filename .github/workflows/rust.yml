@@ -19,6 +19,6 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run clippy
-      run: cargo clippy --all-targets --all-features -- -D warnings
+      run: qa/clippy.sh
     - name: Run tests
-      run: cargo test --verbose
+      run: qa/test.sh
