@@ -106,6 +106,19 @@ impl<T> List<T> {
     }
 }
 
+/*
+ * Make List<T> an iterator.
+ */
+
+impl<T> Iterator for List<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.pop()
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::List;
@@ -214,5 +227,19 @@ mod test {
         assert_eq!(iter.next(), Some(2));
         assert_eq!(iter.next(), Some(1));
         assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn test_list_next() {
+        let mut list = List::new();
+
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        assert_eq!(list.next(), Some(3));
+        assert_eq!(list.next(), Some(2));
+        assert_eq!(list.next(), Some(1));
+        assert_eq!(list.next(), None);
     }
 }
