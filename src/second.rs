@@ -51,6 +51,7 @@ impl<T> Default for List<T> {
     }
 }
 
+
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur = self.head.take();
@@ -58,6 +59,18 @@ impl<T> Drop for List<T> {
         while let Some(mut node) = cur {
             cur = node.next.take();
         }
+    }
+}
+
+/*
+ * Implementing Iterator.
+ */
+
+impl<T> Iterator for List<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.pop()
     }
 }
 
@@ -98,5 +111,19 @@ mod test {
         list.push(1);
 
         assert_eq!(list.peek(), Some(&1));
+    }
+
+    #[test]
+    fn iterator() {
+        let mut list = List::new();
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        assert_eq!(list.next(), Some(3));
+        assert_eq!(list.next(), Some(2));
+        assert_eq!(list.next(), Some(1));
+        assert_eq!(list.next(), None);
+        assert_eq!(list.next(), None);
     }
 }
