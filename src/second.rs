@@ -88,7 +88,12 @@ impl<'a, T> Iterator for ListIter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        unimplemented!()
+        self.next.map(
+            |node| {
+                self.next = node.next.as_deref();
+                &node.elem
+            }
+        )
     }
 }
 
@@ -150,5 +155,21 @@ mod test {
         assert_eq!(list.next(), Some(1));
         assert_eq!(list.next(), None);
         assert_eq!(list.next(), None);
+    }
+
+    #[test]
+    fn ref_iterator() {
+        let mut list = List::new();
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        let mut iter = list.iter();
+
+        assert_eq!(iter.next(), Some(&3));
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&1));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
     }
 }
