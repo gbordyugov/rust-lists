@@ -1,46 +1,49 @@
 pub struct List<T> {
-    head: Link<T>
+    head: Link<T>,
 }
+
 
 type Link<T> = Option<Box<Node<T>>>;
 
-struct Node<T> {
+
+struct Node<T>{
     elem: T,
     next: Link<T>,
 }
+
 
 impl<T> List<T> {
     pub fn new() -> Self {
         List { head: None }
     }
 
-    pub fn push(&mut self, elem: T) {
-        let n = Node {
-            elem,
-            next: self.head.take()
+    pub fn push(&mut self, t: T) {
+        let new_node = Node {
+            elem: t,
+            next: self.head.take(),
         };
-        self.head = Some(Box::new(n))
+
+        self.head = Some(Box::new(new_node));
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        self.head.take().map( |node| {
-            self.head = node.next;
-            node.elem
-        })
+        self.head.take().map(
+            |node| {
+                self.head = node.next;
+                node.elem
+            }
+        )
     }
 
     pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| {
-            &node.elem
-        })
-    }
-
-    pub fn peek_mut(&mut self) -> Option<&mut T> {
-        self.head.as_mut().map(|node| {
-            &mut node.elem
-        })
+        self.head.as_deref().map(
+            |node| {
+                &node.elem
+            }
+        )
     }
 }
+
 
 impl<T> Default for List<T> {
     fn default() -> Self {
@@ -48,65 +51,20 @@ impl<T> Default for List<T> {
     }
 }
 
+
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur = self.head.take();
-        while let Some(node) = cur {
-            cur = node.next
+
+        while let Some(mut node) = cur {
+            cur = node.next.take();
         }
     }
 }
 
 
 /*
- * Implementing IntoIter.
- */
-
-pub struct IntoIterList<T>(List<T>);
-
-impl<T> Iterator for IntoIterList<T> {
-    type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.pop()
-    }
-}
-
-impl<T> List<T> {
-    pub fn into_iter_list(self) -> IntoIterList<T> {
-        IntoIterList(self)
-    }
-}
-
-/*
- * Implementing iterator.
- */
-
-pub struct ListIterator<'a, T> {
-    next: Option<&'a Node<T>>,
-}
-
-impl<T> List<T> {
-    pub fn iter(&self) -> ListIterator<T> {
-        ListIterator {
-            next: self.head.as_deref()
-        }
-    }
-}
-
-impl<'a, T> Iterator for ListIterator<'a, T> {
-    type Item = &'a T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next.map(
-            |node| {
-                self.next = node.next.as_deref();
-                &node.elem
-            }
-        )
-    }
-}
-/*
- * Make List<T> an iterator.
+ * Implementing T Iterator.
  */
 
 impl<T> Iterator for List<T> {
@@ -118,63 +76,100 @@ impl<T> Iterator for List<T> {
 }
 
 
+/*
+ * Implementing &T Iterator.
+ */
+
+pub struct ListIter<'a, T> {
+    next: Option<&'a Node<T>>
+}
+
+impl<'a, T> Iterator for ListIter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(
+            |node| {
+                self.next = node.next.as_deref();
+                &node.elem
+            }
+        )
+    }
+}
+
+impl<T> List<T> {
+    pub fn iter(&self) -> ListIter<T> {
+        ListIter {
+            next: self.head.as_deref()
+        }
+    }
+}
+
+
+/*
+ * Implementing &T Iterator.
+ */
+
+pub struct ListIterMut<'a, T> {
+    next: Option<&'a mut Node<T>>,
+}
+
+
+impl<'a, T> Iterator for ListIterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<&'a mut T> {
+        self.next.take().map(
+            |node| {
+                self.next = node.next.as_deref_mut();
+                &mut node.elem
+            }
+        )
+    }
+}
+
+
+impl<T> List<T> {
+    pub fn iter_mut(&mut self) -> ListIterMut<T> {
+        ListIterMut {
+            next: self.head.as_deref_mut()
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::List;
 
     #[test]
-    fn test_popping_from_empty_list() {
+    fn pop_from_empty_list() {
         let mut list = List::<i32>::new();
 
         assert_eq!(list.pop(), None);
     }
 
     #[test]
-    fn test_singleton_list() {
+    fn pop_from_non_empty_list() {
         let mut list = List::new();
-
-        list.push(1);
-
-        assert_eq!(list.pop(), Some(1));
-        assert_eq!(list.pop(), None);
-    }
-
-    #[test]
-    fn test_doublet_list() {
-        let mut list = List::new();
-
-        list.push(1);
-        list.push(2);
-
-        assert_eq!(list.pop(), Some(2));
-        assert_eq!(list.pop(), Some(1));
-        assert_eq!(list.pop(), None);
-    }
-
-    #[test]
-    fn test_triplet_list() {
-        let mut list = List::new();
-
-        list.push(1);
-        list.push(2);
-        list.push(3);
-
+        for i in 1..4 {
+            list.push(i)
+        }
         assert_eq!(list.pop(), Some(3));
         assert_eq!(list.pop(), Some(2));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
+        assert_eq!(list.pop(), None);
     }
 
     #[test]
-    fn test_peek_empty() {
+    fn peek_into_empty_list() {
         let list = List::<i32>::new();
-
         assert_eq!(list.peek(), None);
-
     }
 
     #[test]
-    fn test_peek_nonempty() {
+    fn peek_into_non_empty_list() {
         let mut list = List::new();
         list.push(1);
 
@@ -182,56 +177,8 @@ mod test {
     }
 
     #[test]
-    fn test_peek_mut_empty() {
-        let mut list = List::<i32>::new();
-
-        assert_eq!(list.peek_mut(), None);
-
-    }
-
-    #[test]
-    fn test_peek_mut_nonempty() {
+    fn iterator() {
         let mut list = List::new();
-        list.push(1);
-
-        assert_eq!(list.peek_mut(), Some(&mut 1));
-    }
-
-    #[test]
-    fn test_peek_mut_nonempty_mutate() {
-        let mut list = List::new();
-        list.push(1);
-
-        assert_eq!(list.peek(), Some(&1));
-
-        if let Some(val) = list.peek_mut() {
-            *val = 42
-        };
-
-        assert_eq!(list.peek(), Some(&42));
-        assert_eq!(list.pop(), Some(42));
-    }
-
-    #[test]
-    fn test_into_iter_list() {
-        let mut list = List::new();
-
-        for i in 1..4 {
-            list.push(i)
-        }
-
-        let mut iter = list.into_iter_list();
-
-        assert_eq!(iter.next(), Some(3));
-        assert_eq!(iter.next(), Some(2));
-        assert_eq!(iter.next(), Some(1));
-        assert_eq!(iter.next(), None);
-    }
-
-    #[test]
-    fn test_list_next() {
-        let mut list = List::new();
-
         for i in 1..4 {
             list.push(i)
         }
@@ -240,12 +187,12 @@ mod test {
         assert_eq!(list.next(), Some(2));
         assert_eq!(list.next(), Some(1));
         assert_eq!(list.next(), None);
+        assert_eq!(list.next(), None);
     }
 
     #[test]
-    fn test_iter() {
+    fn ref_iterator() {
         let mut list = List::new();
-
         for i in 1..4 {
             list.push(i)
         }
@@ -255,6 +202,23 @@ mod test {
         assert_eq!(iter.next(), Some(&3));
         assert_eq!(iter.next(), Some(&2));
         assert_eq!(iter.next(), Some(&1));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn ref_mut_iterator() {
+        let mut list = List::new();
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        let mut iter = list.iter_mut();
+
+        assert_eq!(iter.next(), Some(&mut 3));
+        assert_eq!(iter.next(), Some(&mut 2));
+        assert_eq!(iter.next(), Some(&mut 1));
+        assert_eq!(iter.next(), None);
         assert_eq!(iter.next(), None);
     }
 }
