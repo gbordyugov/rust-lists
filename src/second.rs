@@ -35,8 +35,12 @@ impl<T> List<T> {
         )
     }
 
-    pub fn peek(&self) -> &T {
-        unimplemented!()
+    pub fn peek(&self) -> Option<&T> {
+        self.head.as_deref().map(
+            |node| {
+                &node.elem
+            }
+        )
     }
 }
 
@@ -53,14 +57,14 @@ mod test {
     use super::List;
 
     #[test]
-    fn popping_from_empty_list() {
+    fn pop_from_empty_list() {
         let mut list = List::<i32>::new();
 
         assert_eq!(list.pop(), None);
     }
 
     #[test]
-    fn popping_from_non_empty_list() {
+    fn pop_from_non_empty_list() {
         let mut list = List::new();
         for i in 1..4 {
             list.push(i)
@@ -70,5 +74,19 @@ mod test {
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
         assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn peek_into_empty_list() {
+        let list = List::<i32>::new();
+        assert_eq!(list.peek(), None);
+    }
+
+    #[test]
+    fn peek_into_non_empty_list() {
+        let mut list = List::new();
+        list.push(1);
+
+        assert_eq!(list.peek(), Some(&1));
     }
 }
