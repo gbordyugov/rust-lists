@@ -105,6 +105,39 @@ impl<T> List<T> {
     }
 }
 
+
+/*
+ * Implementing &T Iterator.
+ */
+
+pub struct ListIterMut<'a, T> {
+    next: Option<&'a mut Node<T>>,
+}
+
+
+impl<'a, T> Iterator for ListIterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<&'a mut T> {
+        self.next.take().map(
+            |node| {
+                self.next = node.next.as_deref_mut();
+                &mut node.elem
+            }
+        )
+    }
+}
+
+
+impl<T> List<T> {
+    pub fn iter_mut(&mut self) -> ListIterMut<T> {
+        ListIterMut {
+            next: self.head.as_deref_mut()
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::List;
@@ -169,6 +202,22 @@ mod test {
         assert_eq!(iter.next(), Some(&3));
         assert_eq!(iter.next(), Some(&2));
         assert_eq!(iter.next(), Some(&1));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn ref_mut_iterator() {
+        let mut list = List::new();
+        for i in 1..4 {
+            list.push(i)
+        }
+
+        let mut iter = list.iter_mut();
+
+        assert_eq!(iter.next(), Some(&mut 3));
+        assert_eq!(iter.next(), Some(&mut 2));
+        assert_eq!(iter.next(), Some(&mut 1));
         assert_eq!(iter.next(), None);
         assert_eq!(iter.next(), None);
     }
