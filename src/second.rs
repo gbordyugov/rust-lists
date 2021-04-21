@@ -93,8 +93,10 @@ impl<'a, T> Iterator for ListIter<'a, T> {
 }
 
 impl<T> List<T> {
-    pub fn to_iter(&self) -> ListIter<T> {
-        unimplemented!()
+    pub fn iter(&self) -> ListIter<T> {
+        ListIter {
+            next: self.head.as_deref()
+        }
     }
 }
 
