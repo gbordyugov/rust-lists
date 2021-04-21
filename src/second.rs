@@ -51,6 +51,15 @@ impl<T> Default for List<T> {
     }
 }
 
+impl<T> Drop for List<T> {
+    fn drop(&mut self) {
+        let mut cur = self.head.take();
+
+        while let Some(mut node) = cur {
+            cur = node.next.take();
+        }
+    }
+}
 
 #[cfg(test)]
 mod test {
