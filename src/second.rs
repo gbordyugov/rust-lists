@@ -55,8 +55,8 @@ impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur = self.head.take();
 
-        while let Some(node) = cur {
-            cur = node.next;
+        while let Some(mut node) = cur {
+            cur = node.next.take();
         }
     }
 }
