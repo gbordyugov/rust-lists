@@ -62,8 +62,9 @@ impl<T> Drop for List<T> {
     }
 }
 
+
 /*
- * Implementing Iterator.
+ * Implementing T Iterator.
  */
 
 impl<T> Iterator for List<T> {
@@ -74,6 +75,28 @@ impl<T> Iterator for List<T> {
     }
 }
 
+
+/*
+ * Implementing &T Iterator.
+ */
+
+pub struct ListIter<'a, T> {
+    next: Option<&'a Node<T>>
+}
+
+impl<'a, T> Iterator for ListIter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        unimplemented!()
+    }
+}
+
+impl<T> List<T> {
+    pub fn to_iter(&self) -> ListIter<T> {
+        unimplemented!()
+    }
+}
 
 #[cfg(test)]
 mod test {
