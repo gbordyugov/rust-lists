@@ -88,7 +88,7 @@ impl<'a, T> Iterator for ListIter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.next.map(
+        self.next.take().map(
             |node| {
                 self.next = node.next.as_deref();
                 &node.elem
