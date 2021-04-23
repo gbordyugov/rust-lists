@@ -47,7 +47,7 @@ impl<T> List<T> {
 
 impl<T> Default for List<T> {
     fn default() -> Self {
-        List::new()
+        Self::new()
     }
 }
 
