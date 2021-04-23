@@ -51,13 +51,21 @@ impl<T> Default for List<T> {
     }
 }
 
-/*
+
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        unimplemented!()
+        let mut cur = self.head.take();
+
+        while let Some(node) = cur {
+            if let Ok(mut node) = Rc::try_unwrap(node) {
+                cur = node.next.take();
+            } else {
+                break;
+            }
+        }
     }
 }
-*/
+
 
 #[cfg(test)]
 mod test {
