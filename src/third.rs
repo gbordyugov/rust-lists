@@ -57,8 +57,8 @@ impl<T> Drop for List<T> {
         let mut cur = self.head.take();
 
         while let Some(node) = cur {
-            if let Ok(mut node) = Rc::try_unwrap(node) {
-                cur = node.next.take();
+            if let Ok(node) = Rc::try_unwrap(node) {
+                cur = node.next;
             } else {
                 break;
             }
