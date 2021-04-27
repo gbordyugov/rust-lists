@@ -11,3 +11,15 @@ struct Node<T> {
 }
 
 type Link<T> = Option<Rc<Node<T>>>;
+
+impl<T> Tree<T> {
+    pub fn new() -> Self {
+        Tree { head: None }
+    }
+}
+
+impl<T> Default for Tree<T> {
+    fn default() -> Self {
+        Tree::new()
+    }
+}
