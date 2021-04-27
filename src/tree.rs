@@ -17,6 +17,18 @@ impl<T> Tree<T> {
         Tree { head: None }
     }
 
+    pub fn new3(left: &Self, right: &Self, t: T) -> Self {
+        let node = Node {
+            elem: t,
+            left: left.head.clone(),
+            right: right.head.clone(),
+        };
+
+        Tree {
+            head: Some(Rc::new(node))
+        }
+    }
+
     pub fn left(&self) -> Self {
         Tree {
             head: self.head.as_ref().and_then(
@@ -31,6 +43,10 @@ impl<T> Tree<T> {
                 |node| node.right.clone()
             )
         }
+    }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.head.as_deref().map(|n| &n.elem)
     }
 }
 
