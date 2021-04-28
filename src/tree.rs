@@ -13,11 +13,11 @@ struct Node<T> {
 type Link<T> = Option<Rc<Node<T>>>;
 
 impl<T> Tree<T> {
-    pub fn new() -> Self {
+    pub fn empty() -> Self {
         Tree { head: None }
     }
 
-    pub fn new3(left: &Self, right: &Self, t: T) -> Self {
+    pub fn new(left: &Self, right: &Self, t: T) -> Self {
         let node = Node {
             elem: t,
             left: left.head.clone(),
