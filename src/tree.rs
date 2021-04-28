@@ -68,4 +68,14 @@ mod test {
 
         assert_eq!(empty.peek(), None);
     }
+
+    #[test]
+    fn singleton() {
+        let empty = Tree::empty();
+        let singleton = Tree::new(&empty, &empty, 3);
+
+        assert_eq!(singleton.peek(), Some(&3));
+        assert_eq!(singleton.left().peek(), None);
+        assert_eq!(singleton.right().peek(), None);
+    }
 }
