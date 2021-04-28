@@ -50,8 +50,22 @@ impl<T> Tree<T> {
     }
 }
 
+
 impl<T> Default for Tree<T> {
     fn default() -> Self {
-        Tree::new()
+        Tree::empty()
+    }
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::Tree;
+
+    #[test]
+    fn empty() {
+        let empty = Tree::<i32>::empty();
+
+        assert_eq!(empty.peek(), None);
     }
 }
