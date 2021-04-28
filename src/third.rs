@@ -35,7 +35,7 @@ impl<T> List<T> {
         )
     }
 
-    pub fn tail(&self) -> List<T> {
+    pub fn tail(&self) -> Self {
         List {
             head: self.head.as_ref().and_then(
                 |node| node.next.clone()
