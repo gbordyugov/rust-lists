@@ -21,4 +21,4 @@ jobs:
     - name: Run clippy
       run: qa/clippy.sh
     - name: Run tests
-      run: qa/test.sh
+      run: qa/test.sh --verbose
